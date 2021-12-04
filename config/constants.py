@@ -1,4 +1,14 @@
-theme_labels = {
+q1_relation_lables = {
+    1: "Yes",
+    2: "No"
+}
+
+q2_focus_labels = {
+    1: "The story focuses on one incident or event related to gun violence",
+    2: "The story focuses on the issue of gun violence as an ongoing problem"
+}
+
+q3_theme_labels = {
     1: "Gun/2nd Amendment Rights",
     2: "Gun Control/Regulation",
     3: "Politics",
