@@ -1,3 +1,6 @@
+import os
+
+
 q1_relation_lables = {
     1: "Yes",
     2: "No"
@@ -19,4 +22,33 @@ q3_theme_labels = {
     8: "Society/Culture",
     9: "Economic Consequences",
     99: "None of the above (No Label)",
+}
+
+data_root = "data"
+data_dirs = {
+    "raw_data": os.path.join(data_root, "raw_data"),
+    "data_root": data_root,
+    "images": os.path.join(data_root, "images")
+}
+
+data_paths = {
+    "raw_text_data": "data/data.xlsx",
+    "train_data": os.path.join(data_dirs['raw_data'], "data_train.csv"),
+    "test_data": os.path.join(data_dirs['raw_data'], "data_test.csv")
+}
+
+train_test_args = {
+  "get_train_test": {
+    "seed": 0,
+    "data_path": data_paths['raw_text_data'],
+    "test_pct": 0.20
+  },
+  "output_dataset": {
+      "train": {
+          "output_path": data_paths['train_data']
+      },
+      "test":{
+          "output_path": data_paths['test_data']
+      }
+  }
 }

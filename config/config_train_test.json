@@ -1,0 +1,10 @@
+{
+  "get_train_test": {
+    "seed": 0,
+    "data_path": "data/data.xlsx",
+    "test_pct": 0.20
+  },
+  "output_dataset": {
+    "output_path": "data/raw_data"
+  }
+}
