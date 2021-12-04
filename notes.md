@@ -54,11 +54,23 @@ if "tokenize" in config.keys():
 
 
 
+## Justin and George Notes
+* image data
+  * lets decide what pretrained model we want etc
+  * outline what work needs to be done here 
+  * assign things to do
+  * pre trained model, transfer learn classification on classes - do this alone as baseline
+  * or input to multimodal net that looks at text too
+* text models
+  * BERT based 
+  * TFIDF etc
+* Multimodal
+  * throw it all into 1 model
 
-
-
-
-
+* plan
+  * Justin creating raw image classification model transfer learn from some architecture 
+  * George creating raw text model from headline using BERT (then can extend to other text based features)
+  * Next step after image and text unimodeal - figure out how to multimodal them 
 
 
 
