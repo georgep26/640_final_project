@@ -28,15 +28,22 @@ data_root = "data"
 data_dirs = {
     "raw_data": os.path.join(data_root, "raw_data"),
     "data_root": data_root,
-    "images": os.path.join(data_root, "images")
+    "images": os.path.join(data_root, "images"),
+    "preprocessed": os.path.join(data_root, "preprocessed_data")
 }
 
 data_paths = {
     "raw_text_data": "data/data.xlsx",
     "raw_text_data_csv": "data/data.csv",
     "train_data": os.path.join(data_dirs['raw_data'], "data_train.csv"),
-    "test_data": os.path.join(data_dirs['raw_data'], "data_test.csv")
+    "test_data": os.path.join(data_dirs['raw_data'], "data_test.csv"),
+    "preprocessed_train_data": os.path.join(data_dirs['preprocessed'], "data_train.csv"),
+    "preprocessed_test_data": os.path.join(data_dirs['preprocessed'], "data_test.csv")
 }
+
+##################################################
+# config for train test split
+##################################################
 
 train_test_args = {
   "get_train_test": {
@@ -55,13 +62,68 @@ train_test_args = {
   }
 }
 
+##################################################
+##################################################
+
+##################################################
+# config for id cleaning
+##################################################
+
+clean_image_id = [
+    {
+        "data_path": data_paths['train_data'],
+        "image_dir": data_dirs['images'],
+        "image_id_col": "imageID",
+        "out_path": data_paths['preprocessed_train_data']
+    },
+    {
+        "data_path": data_paths['test_data'],
+        "image_dir": data_dirs['images'],
+        "image_id_col": "imageID",
+        "out_path": data_paths['preprocessed_test_data']
+    }
+]
+
+
+##################################################
+##################################################
+
+##################################################
+# Config for unimodal image learning
+##################################################
+
 dataset_config = {
     "train_image_dataset": {
-        # "data_path": data_paths['train_data'],
-        "data_path": data_paths['raw_text_data_csv'],
         "image_dir": data_dirs['images'],
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
         "train_data": True
+    },
+    "val_image_dataset": {
+        "image_dir": data_dirs['images'],
+        "label_col": "Q3 Theme1",
+        "image_id_col": "imageID",
+        "train_data": False
     }
 }
+
+model_config = {
+    "num_labels": 9,
+    "dropout": 0.5
+}
+
+loader_config = {
+    "batch_size": 16
+}
+
+train_config = {
+    "num_epochs": 5,
+    "learning_rate": 2e-5,
+    "train_ds_config": dataset_config['train_image_dataset'],
+    "val_ds_config": dataset_config['val_image_dataset'],
+    "model_config": model_config,
+    "loader_config": loader_config
+}
+
+##################################################
+##################################################
