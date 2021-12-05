@@ -106,7 +106,8 @@ dataset_config = {
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
         "train_data": False
-    }
+    },
+    "train_downsample_frac": 1
 }
 
 model_config = {

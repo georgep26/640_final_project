@@ -4,6 +4,8 @@ Unimodal image classification - transfer learn using some
 
 import os
 import sys
+import time
+import json
 from datetime import datetime
 
 import numpy as np
@@ -175,6 +177,8 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
     losses = []
     correct_pred = 0
 
+    start_time = time.time()
+
     for entry in data_loader:
         # vars
         img_batch = entry['image'].to(device)
@@ -192,15 +196,35 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
         correct_pred += torch.sum(preds == label_batch) # TODO check that this is doing what I think
         losses.append(loss.item())
 
+    print(f"Epoch elapsed time: {time.time() - start_time}")
+
     return correct_pred.double() / n_examples, np.mean(losses)
 
 
+class ConfigWriter:
+    def __init__(self, output_path):
+        self.output_path = output_path
+        self.config = {}
+
+    def add(self, title, dictionary):
+        self.config[title] = dictionary
+
+    def write(self):
+        with open(os.path.join(self.output_path, "config.json"), "w") as f:
+            json.dump(self.config, f, indent=4)
 
 
 if __name__ == "__main__":
+    # TODO
+    # * completely config driven - transforms, layers etc
+    # * save config into dir
+    # * informative prints for output on scc time elapsed etc
+
     df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
     train_df, val_df = train_test_split(df, test_size=.2)
-    # train_df = train_df.sample(64)
+
+    train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
+
     train_ds = image_dataset(train_df, **constants.dataset_config['train_image_dataset'])
     val_ds = image_dataset(val_df, **constants.dataset_config['val_image_dataset'])
     res_mod = models.resnet18(pretrained=True)
@@ -210,5 +234,13 @@ if __name__ == "__main__":
     output_dir = os.path.join(constants.data_dirs['model_results'], f"unimodal_image_{timestamp}")
     os.mkdir(output_dir)
 
+    config_writer = ConfigWriter(output_dir)
+    config_writer.add("dataset_config", constants.dataset_config)
+    config_writer.add("model_config", constants.model_config)
+    config_writer.add("loader_config", constants.loader_config)
+    config_writer.add("train_config", constants.train_config)
+
     train_model(res_mod, train_df, val_df, output_dir, **constants.train_config)
+
+    config_writer.write()
 
