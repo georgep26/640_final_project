@@ -33,6 +33,7 @@ data_dirs = {
 
 data_paths = {
     "raw_text_data": "data/data.xlsx",
+    "raw_text_data_csv": "data/data.csv",
     "train_data": os.path.join(data_dirs['raw_data'], "data_train.csv"),
     "test_data": os.path.join(data_dirs['raw_data'], "data_test.csv")
 }
@@ -43,6 +44,7 @@ train_test_args = {
     "data_path": data_paths['raw_text_data'],
     "test_pct": 0.20
   },
+
   "output_dataset": {
       "train": {
           "output_path": data_paths['train_data']
@@ -51,4 +53,15 @@ train_test_args = {
           "output_path": data_paths['test_data']
       }
   }
+}
+
+dataset_config = {
+    "train_image_dataset": {
+        # "data_path": data_paths['train_data'],
+        "data_path": data_paths['raw_text_data_csv'],
+        "image_dir": data_dirs['images'],
+        "label_col": "Q3 Theme1",
+        "image_id_col": "imageID",
+        "train_data": True
+    }
 }
