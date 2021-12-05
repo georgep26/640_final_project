@@ -44,7 +44,11 @@ if __name__ == "__main__":
         master_history['val_acc'].append(history['val_acc'])
         master_history['val_loss'].append(history['val_loss'])
 
-    print(master_history)
+    # print(master_history)
+
+    config_writer = ConfigWriter('model_exploration/model_results')
+    config_writer.add("model_history", master_history)
+    config_writer.write()
     test_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(test_df, 
                                                                                         config.bert_baseline_data['text_col'],
                                                                                         config.bert_baseline_data['pred_col'],
