@@ -10,7 +10,7 @@ bert_baseline_model = {
     "optimizer": AdamW,
     "loss_fn": nn.CrossEntropyLoss(),
     "num_classes": 10,
-    "num_epochs": 10
+    "num_epochs": 15
 }
 
 bert_baseline_data = {
