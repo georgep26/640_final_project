@@ -146,6 +146,8 @@ def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_r
     best_accuracy = 0
 
     for epoch in range(num_epochs):
+        start_time = time.time()
+
         print(f"Epoch {epoch+1} of {num_epochs}")
 
         train_acc, train_loss = train_epoch(model, train_data_loader, loss_function, optimizer, device, len(train_df))
@@ -167,6 +169,8 @@ def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_r
             torch.save(model.state_dict(), os.path.join(output_dir, 'best_model_state.bin'))
             best_accuracy = val_acc
 
+        print(f"Epoch elapsed time: {time.time() - start_time}")
+
     create_training_plot(history, output_dir)
 
 
@@ -176,8 +180,6 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
     model = model.train()
     losses = []
     correct_pred = 0
-
-    start_time = time.time()
 
     for entry in data_loader:
         # vars
@@ -195,8 +197,6 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
         x, preds = torch.max(outputs, dim=1)
         correct_pred += torch.sum(preds == label_batch) # TODO check that this is doing what I think
         losses.append(loss.item())
-
-    print(f"Epoch elapsed time: {time.time() - start_time}")
 
     return correct_pred.double() / n_examples, np.mean(losses)
 
@@ -216,9 +216,9 @@ class ConfigWriter:
 
 if __name__ == "__main__":
     # TODO
-    # * completely config driven - transforms, layers etc
-    # * save config into dir
-    # * informative prints for output on scc time elapsed etc
+    # * completely config driven - transforms, layers etc, freeze layers?
+    # * done! save config into dir
+    # * done! informative prints for output on scc time elapsed etc
 
     df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
     train_df, val_df = train_test_split(df, test_size=.2)
