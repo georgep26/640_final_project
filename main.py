@@ -37,9 +37,8 @@ if __name__ == "__main__":
                                                                                         config.bert_baseline_data['batch_size'],
                                                                                         config.bert_baseline_data['num_workers'])
 
-        train_session = train_session.TrainModel(**config.bert_baseline_model)
-
-        history = train_session.train(train_data_loader, validation_data_loader)
+        session = train_session.TrainModel(**config.bert_baseline_model)
+        history = session.train(train_data_loader, validation_data_loader)
         master_history['train_acc'].append(history['train_acc'])
         master_history['train_loss'].append(history['train_loss'])
         master_history['val_acc'].append(history['val_acc'])
