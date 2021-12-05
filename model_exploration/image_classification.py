@@ -23,6 +23,7 @@ from torch.utils.data import Dataset, DataLoader
 from skimage import io
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 from training_plots import create_training_plot
 
 
@@ -132,6 +133,7 @@ def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_r
                 loader_config):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"DEVICE: {device}")
+    config_writer.print(f"DEVICE: {device}")
 
     model = ImageModel(base_model, **model_config)
     model.to(device)
@@ -149,14 +151,17 @@ def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_r
         start_time = time.time()
 
         print(f"Epoch {epoch+1} of {num_epochs}")
+        config_writer.print(f"Epoch {epoch+1} of {num_epochs}")
 
         train_acc, train_loss = train_epoch(model, train_data_loader, loss_function, optimizer, device, len(train_df))
 
         print(f'Train loss {train_loss} accuracy {train_acc}')
+        config_writer.print(f'Train loss {train_loss} accuracy {train_acc}')
 
         val_acc, val_loss = eval_model(model, val_data_loader, loss_function, device, len(val_df))
 
-        print(f'Val   loss {val_loss} accuracy {val_acc}\n')
+        print(f'Val   loss {val_loss} accuracy {val_acc}')
+        config_writer.print(f'Val   loss {val_loss} accuracy {val_acc}')
 
         # log history
         history['train_acc'].append(train_acc)
@@ -169,9 +174,11 @@ def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_r
             torch.save(model.state_dict(), os.path.join(output_dir, 'best_model_state.bin'))
             best_accuracy = val_acc
 
-        print(f"Epoch elapsed time: {time.time() - start_time}")
+        print(f"Epoch elapsed time: {time.time() - start_time}\n")
+        config_writer.print(f"Epoch elapsed time: {time.time() - start_time}\n")
 
     create_training_plot(history, output_dir)
+    return history
 
 
 
@@ -205,13 +212,39 @@ class ConfigWriter:
     def __init__(self, output_path):
         self.output_path = output_path
         self.config = {}
+        self.config['stdout'] = ""
 
     def add(self, title, dictionary):
         self.config[title] = dictionary
 
+    def print(self, print_string):
+        self.config['stdout'] = self.config['stdout'] + "\n" + print_string
+        self.write()
+
     def write(self):
         with open(os.path.join(self.output_path, "config.json"), "w") as f:
             json.dump(self.config, f, indent=4)
+
+
+def k_fold_cross_val(df, train_func, output_dir, constants):
+    # train_df, val_df = train_test_split(df, test_size=.2)
+    master_history = defaultdict(list)
+    kf = KFold(n_splits=4, random_state=None, shuffle=False)
+    for train_index, val_index in kf.split(df):
+        train_df = df[train_index]
+        train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
+        val_df = df[val_index]
+        train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
+        res_mod = models.resnet18(pretrained=True)
+        history = train_func(res_mod, train_df, val_df, output_dir, **constants.train_config)
+        master_history['train_acc'].append(history['train_acc'])
+        master_history['train_loss'].append(history['train_loss'])
+        master_history['val_acc'].append(history['val_acc'])
+        master_history['val_loss'].append(history['val_loss'])
+
+    return np.mean(master_history['val_acc'])
+
+
 
 
 if __name__ == "__main__":
@@ -219,28 +252,25 @@ if __name__ == "__main__":
     # * completely config driven - transforms, layers etc, freeze layers?
     # * done! save config into dir
     # * done! informative prints for output on scc time elapsed etc
-
-    df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
-    train_df, val_df = train_test_split(df, test_size=.2)
-
-    train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
-
-    train_ds = image_dataset(train_df, **constants.dataset_config['train_image_dataset'])
-    val_ds = image_dataset(val_df, **constants.dataset_config['val_image_dataset'])
-    res_mod = models.resnet18(pretrained=True)
-    model = ImageModel(res_mod, 9)
+    """
+    validation, kfold, transforms for images
+    csv going
+    """
 
     timestamp = datetime.now().strftime("%Y%d%m%H%M%S")
     output_dir = os.path.join(constants.data_dirs['model_results'], f"unimodal_image_{timestamp}")
     os.mkdir(output_dir)
-
     config_writer = ConfigWriter(output_dir)
+
+    df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
+
+    k_fold_cross_val(df, train_model)
+
     config_writer.add("dataset_config", constants.dataset_config)
     config_writer.add("model_config", constants.model_config)
     config_writer.add("loader_config", constants.loader_config)
     config_writer.add("train_config", constants.train_config)
 
-    train_model(res_mod, train_df, val_df, output_dir, **constants.train_config)
 
     config_writer.write()
 
