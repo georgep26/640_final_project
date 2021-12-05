@@ -111,9 +111,9 @@ class TrainModel():
             print(f'Val   loss {val_loss} accuracy {val_acc}')
             print()
 
-            history['train_acc'].append(train_acc)
+            history['train_acc'].append(train_acc.item())
             history['train_loss'].append(train_loss)
-            history['val_acc'].append(val_acc)
+            history['val_acc'].append(val_acc.item())
             history['val_loss'].append(val_loss)
 
             if val_acc > best_accuracy:

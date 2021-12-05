@@ -1,6 +1,6 @@
 import config.constants as cst
 import config.train_model_config as config
-import model_exploration.train_model as train_session
+from model_exploration.train_model import TrainModel
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 import pandas as pd
@@ -37,7 +37,7 @@ if __name__ == "__main__":
                                                                                         config.bert_baseline_data['batch_size'],
                                                                                         config.bert_baseline_data['num_workers'])
 
-        session = train_session.TrainModel(**config.bert_baseline_model)
+        session = TrainModel(**config.bert_baseline_model)
         history = session.train(train_data_loader, validation_data_loader)
         master_history['train_acc'].append(history['train_acc'])
         master_history['train_loss'].append(history['train_loss'])
