@@ -10,7 +10,7 @@
 #$ -l gpu_c=6.0
 
 # Give the job a name
-#$ -N output_test
+#$ -N unimode_img_model
 
 # Combine output and error stream
 #$ -j y
