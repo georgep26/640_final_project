@@ -4,6 +4,7 @@ Unimodal image classification - transfer learn using some
 
 import os
 import sys
+from datetime import datetime
 
 import numpy as np
 
@@ -19,8 +20,7 @@ from torch.utils.data import Dataset, DataLoader
 from skimage import io
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
-
-import matplotlib.pyplot as plt
+from training_plots import create_training_plot
 
 
 class image_dataset(Dataset):
@@ -125,11 +125,14 @@ def eval_model(model, data_loader, loss_func, device, n_examples):
   return correct_predictions.double() / n_examples, np.mean(losses)
 
 
-def train_model(base_model, train_df, val_df, num_epochs, learning_rate, train_ds_config, val_ds_config, model_config, loader_config):
+def train_model(base_model, train_df, val_df, output_dir, num_epochs, learning_rate, train_ds_config, val_ds_config, model_config,
+                loader_config):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f"DEVICE: {device}")
 
     model = ImageModel(base_model, **model_config)
+    model.to(device)
+
     train_ds = image_dataset(train_df, **train_ds_config)
     val_ds = image_dataset(val_df, **val_ds_config)
     train_data_loader = get_data_loader(train_ds, **loader_config)
@@ -158,8 +161,12 @@ def train_model(base_model, train_df, val_df, num_epochs, learning_rate, train_d
 
         # checkpoint best performing model so far
         if val_acc > best_accuracy:
-            torch.save(model.state_dict(), 'best_model_state.bin')
+            torch.save(model.state_dict(), os.path.join(output_dir, 'best_model_state.bin'))
             best_accuracy = val_acc
+
+    create_training_plot(history, output_dir)
+
+
 
 
 def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
@@ -198,5 +205,9 @@ if __name__ == "__main__":
     res_mod = models.resnet18(pretrained=True)
     model = ImageModel(res_mod, 9)
 
-    train_model(res_mod, train_df, val_df, **constants.train_config)
+    timestamp = datetime.now().strftime("%Y%d%m%H%M%S")
+    output_dir = os.path.join(constants.data_dirs['model_results'], f"unimodal_image_{timestamp}")
+    os.mkdir(output_dir)
+
+    train_model(res_mod, train_df, val_df, output_dir, **constants.train_config)
 

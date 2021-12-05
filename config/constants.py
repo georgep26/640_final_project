@@ -25,11 +25,13 @@ q3_theme_labels = {
 }
 
 data_root = "data"
+modeling_root = "model_exploration"
 data_dirs = {
     "raw_data": os.path.join(data_root, "raw_data"),
     "data_root": data_root,
     "images": os.path.join(data_root, "images"),
-    "preprocessed": os.path.join(data_root, "preprocessed_data")
+    "preprocessed": os.path.join(data_root, "preprocessed_data"),
+    "model_results": os.path.join(modeling_root, "model_results")
 }
 
 data_paths = {
