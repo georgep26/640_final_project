@@ -1,5 +1,6 @@
 import os
 
+RANDOM_SEED = 42
 
 q1_relation_lables = {
     1: "Yes",
