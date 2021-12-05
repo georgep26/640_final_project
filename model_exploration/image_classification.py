@@ -253,7 +253,7 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         create_training_plot(history, output_dir, title_modifier=count)
         master_history['train_acc'].append(history['train_acc'])
         master_history['train_loss'].append(history['train_loss'])
-        master_history['val_acc'].append(history['val_acc'].item())
+        master_history['val_acc'].append(max(history['val_acc']))
         master_history['val_loss'].append(history['val_loss'])
 
     return np.mean(master_history['val_acc'])
