@@ -176,10 +176,10 @@ def train_model(base_model, train_df, val_df, output_dir, transform_config, num_
         config_writer.print(f'Val   loss {val_loss} accuracy {val_acc}')
 
         # log history
-        history['train_acc'].append(train_acc)
-        history['train_loss'].append(train_loss)
-        history['val_acc'].append(val_acc)
-        history['val_loss'].append(val_loss)
+        history['train_acc'].append(train_acc.item())
+        history['train_loss'].append(train_loss.item())
+        history['val_acc'].append(val_acc.item())
+        history['val_loss'].append(val_loss.item())
 
         # checkpoint best performing model so far
         if val_acc > best_accuracy:
@@ -256,7 +256,7 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         master_history['val_acc'].append(max(history['val_acc']))
         master_history['val_loss'].append(history['val_loss'])
 
-    return np.mean(master_history['val_acc'])
+    return torch.mean(master_history['val_acc']).numpy()
 
 
 
