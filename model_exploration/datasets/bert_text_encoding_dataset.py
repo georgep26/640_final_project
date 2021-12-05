@@ -36,6 +36,14 @@ class TestDataset(Dataset):
         'classification': torch.tensor(Y, dtype=torch.long)
         }
 
-def create_data_loader(df, x_col, y_col, tokenizer, max_len, batch_size, num_workers):
-    ds = TestDataset(text=df[x_col], classification=df[y_col], tokenizer=tokenizer, max_len=max_len)
+def create_data_loader(df, x_cols, y_col, tokenizer, max_len, batch_size, num_workers):
+    '''
+    Creates a DataLoader object
+    '''
+    # Additional logic for handling multiple input colums - all strings are concatinated
+    df["X"] = ""
+    for col in x_cols:
+        df["X"] = df["X"] + " " + df[col]
+    # Create DataSet
+    ds = TestDataset(text=df["X"], classification=df[y_col], tokenizer=tokenizer, max_len=max_len)
     return DataLoader(ds, batch_size=batch_size, num_workers=num_workers)
