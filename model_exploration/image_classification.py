@@ -256,9 +256,7 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         master_history['val_acc'].append(max(history['val_acc']))
         master_history['val_loss'].append(history['val_loss'])
 
-    return torch.mean(master_history['val_acc']).numpy()
-
-
+    return np.mean(master_history['val_acc'])
 
 
 if __name__ == "__main__":
