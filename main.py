@@ -1,9 +1,10 @@
+print(sys.path)
 import config.train_model_config as config
 import model_exploration.train_model as train_session
 import sys
 
 if __name__ == "__main__":
-    print(sys.path)
+   
     # Get data loaders
     train_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(config.bert_baseline_data['train_data_loc'], 
                                                                                     config.bert_baseline_data['text_col'],
