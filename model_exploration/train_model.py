@@ -21,7 +21,7 @@ class TrainModel():
         print(f"DEVICE: {self.device}")
 
     def model_setup(self):
-        self.model = self.model(10)
+        self.model = self.model(self.num_classes)
         self.model.to(self.device)
     
     def train_epoch(self, data_loader):
@@ -61,7 +61,7 @@ class TrainModel():
 
         losses = []
         correct_predictions = 0
-        # TODO: Might need to pass in the number of examples from the dataframe
+        # TODO: Might need to pass in the number of examples from the dataframe - dataset should have same length as df
         n_examples = len(data_loader.dataset)
         
 
