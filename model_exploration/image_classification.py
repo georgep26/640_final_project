@@ -200,7 +200,7 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
 if __name__ == "__main__":
     df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
     train_df, val_df = train_test_split(df, test_size=.2)
-    train_df = train_df.sample(64)
+    # train_df = train_df.sample(64)
     train_ds = image_dataset(train_df, **constants.dataset_config['train_image_dataset'])
     val_ds = image_dataset(val_df, **constants.dataset_config['val_image_dataset'])
     res_mod = models.resnet18(pretrained=True)
