@@ -36,7 +36,6 @@ class TestDataset(Dataset):
         'classification': torch.tensor(Y, dtype=torch.long)
         }
 
-def create_data_loader(data_loc, x_col, y_col, tokenizer, max_len, batch_size, num_workers):
-    df = pd.read_csv(data_loc)
+def create_data_loader(df, x_col, y_col, tokenizer, max_len, batch_size, num_workers):
     ds = TestDataset(text=df[x_col], classification=df[y_col], tokenizer=tokenizer, max_len=max_len)
     return DataLoader(ds, batch_size=batch_size, num_workers=num_workers)

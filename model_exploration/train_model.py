@@ -29,7 +29,9 @@ class TrainModel():
 
         losses = []
         correct_predictions = 0
-        n_examples = len(data_loader)
+        # The number of examples is the total record count (so the size of the dataset)
+        n_examples = len(data_loader.dataset)
+        
         
         for d in data_loader:
             input_ids = d["input_ids"].to(self.device)
@@ -59,7 +61,9 @@ class TrainModel():
 
         losses = []
         correct_predictions = 0
-        n_examples = len(data_loader)
+        # TODO: Might need to pass in the number of examples from the dataframe
+        n_examples = len(data_loader.dataset)
+        
 
         with torch.no_grad():
             for d in data_loader:
@@ -80,13 +84,13 @@ class TrainModel():
         return correct_predictions.double() / n_examples, np.mean(losses)
 
 
-    def train(self, data_loader):
+    def train(self, train_data_loader, validation_data_loader):
         print("Training model...")
         self.select_hardware()
         self.model_setup()
 
         self.optimizer = self.optimizer(self.model.parameters(), lr=2e-5, correct_bias=False)
-        total_steps = len(data_loader) * self.num_epochs
+        total_steps = len(train_data_loader) * self.num_epochs
         self.scheduler = get_linear_schedule_with_warmup(self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
         self.loss_fn.to(self.device)
         
@@ -98,11 +102,11 @@ class TrainModel():
             print(f'Epoch {epoch + 1}/{self.num_epochs}')
             print('-' * 10)
 
-            train_acc, train_loss = self.train_epoch(data_loader)
+            train_acc, train_loss = self.train_epoch(train_data_loader)
             
             print(f'Train loss {train_loss} accuracy {train_acc}')
 
-            val_acc, val_loss = self.eval_model(data_loader)
+            val_acc, val_loss = self.eval_model(validation_data_loader)
             
             print(f'Val   loss {val_loss} accuracy {val_acc}')
             print()
