@@ -8,6 +8,7 @@ from datetime import datetime
 
 import numpy as np
 
+print(os.getcwd())
 sys.path.append(os.getcwd())
 import config.constants as constants
 import torch
