@@ -1,7 +1,8 @@
+import sys
 print(sys.path)
 import config.train_model_config as config
 import model_exploration.train_model as train_session
-import sys
+
 
 if __name__ == "__main__":
    
