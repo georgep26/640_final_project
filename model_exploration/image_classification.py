@@ -137,6 +137,7 @@ def train_model(base_model, train_df, val_df, num_epochs, learning_rate, train_d
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     loss_function = nn.CrossEntropyLoss().to(device)
     history = defaultdict(list)
+    best_accuracy = 0
 
     for epoch in range(num_epochs):
         print(f"Epoch {epoch+1} of {num_epochs}")
@@ -189,7 +190,7 @@ def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv(constants.data_paths['train_data'])
+    df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
     train_df, val_df = train_test_split(df, test_size=.2)
     train_df = train_df.sample(64)
     train_ds = image_dataset(train_df, **constants.dataset_config['train_image_dataset'])
