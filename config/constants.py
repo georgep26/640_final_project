@@ -99,13 +99,11 @@ dataset_config = {
         "image_dir": data_dirs['images'],
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
-        "train_data": True
     },
     "val_image_dataset": {
         "image_dir": data_dirs['images'],
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
-        "train_data": False
     },
     "train_downsample_frac": 1
 }
@@ -119,6 +117,21 @@ loader_config = {
     "batch_size": 16
 }
 
+transform_config = {
+    "train": {
+        "image_shape": (224, 224),
+        "horizontal_flip": {
+            "p": 0.5
+        },
+        "rotation": {
+            "degrees": 15
+        }
+        },
+    "inference": {
+        "image_shape": (224, 224),
+    }
+}
+
 train_config = {
     "num_epochs": 5,
     "learning_rate": 2e-5,
@@ -127,6 +140,8 @@ train_config = {
     "model_config": model_config,
     "loader_config": loader_config
 }
+
+description = "unimodal resnet18 transfer learned"
 
 ##################################################
 ##################################################
