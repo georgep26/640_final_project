@@ -291,5 +291,5 @@ if __name__ == "__main__":
     config_writer.add("transform_config", constants.transform_config)
     config_writer.write()
 
-    pd.DataFrame.from_dict(csv_output).to_csv(os.path.join(output_dir, "summary_csv.csv"))
+    pd.DataFrame.from_dict(csv_output).to_csv(os.path.join(output_dir, "summary_csv.csv"), index=False)
 
