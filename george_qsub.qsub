@@ -23,4 +23,4 @@ module load python3/3.8.6
 module load pytorch/1.7.0
 
 # Run the test script
-python /projectnb/cs640g/students/jd9/640_final_project/640_final_project/main.py
+python /projectnb/cs640g/students/georgep4/640_final_project/640_final_project/main.py
