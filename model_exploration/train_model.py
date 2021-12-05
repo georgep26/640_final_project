@@ -119,4 +119,6 @@ class TrainModel():
             if val_acc > best_accuracy:
                 torch.save(self.model.state_dict(), 'best_model_state.bin')
                 best_accuracy = val_acc
+        
+        return history
 
