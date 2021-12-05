@@ -13,15 +13,15 @@ if __name__ == "__main__":
     test_df = pd.read_csv(config.bert_baseline_data['test_data_loc'])
 
     # TODO: Replace this with cross validation - added for testing purposes
-    train_df, validation_df = train_test_split(train_df, test_size=0.1, random_state=cst.RANDOM_SEED)
+    # train_df, validation_df = train_test_split(train_df, test_size=0.1, random_state=cst.RANDOM_SEED)
 
     # Implement k-fold
     kf = KFold(n_splits=4, random_state=None, shuffle=False)
     master_history = defaultdict(list)
     for train_index, val_index in kf.split(train_df):
-        validation_df, train_df = train_df[val_index], train_df[train_index]
+        validation_df, train_df2 = train_df.iloc[val_index], train_df.iloc[train_index]
         # Get data loaders
-        train_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(train_df, 
+        train_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(train_df2, 
                                                                                         config.bert_baseline_data['text_col'],
                                                                                         config.bert_baseline_data['pred_col'],
                                                                                         config.bert_baseline_data['tokenizer'],
