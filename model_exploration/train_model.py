@@ -129,3 +129,7 @@ class TrainModel():
         self.log.add("val_acc_max", max(history['val_acc']))
         return self.log
 
+    def get_test_acc(self, test_data_loader):
+        test_acc, _ = self.eval_model(test_data_loader)
+        return test_acc.item()
+

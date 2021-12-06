@@ -51,10 +51,6 @@ if __name__ == "__main__":
 
         session = TrainModel(config_writer, output_dir, **config.bert_baseline_model)
         history = session.train(train_data_loader, validation_data_loader)
-        # master_history['train_acc'].append(history['train_acc'])
-        # master_history['train_loss'].append(history['train_loss'])
-        # master_history['val_acc'].append(history['val_acc'])
-        # master_history['val_loss'].append(history['val_loss'])
 
 
     test_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(test_df, 
@@ -65,7 +61,8 @@ if __name__ == "__main__":
                                                                                     config.bert_baseline_data['batch_size'],
                                                                                     config.bert_baseline_data['num_workers'])
     
-    
+    test_acc = session.get_test_acc(test_data_loader)
+
     # config_writer.add("model_history", master_history)
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
@@ -73,6 +70,6 @@ if __name__ == "__main__":
     shutil.copy(config_file.__file__, output_dir)
 
     master_log = MasterLog()
-    master_log.add_dict({"model_name": run_name, "model_path": output_dir, "validation_acc": final_val_acc})
+    master_log.add_dict({"model_name": run_name, "model_path": output_dir, "validation_acc": final_val_acc, "test_acc": test_acc})
     master_log.write_log()
     

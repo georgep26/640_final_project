@@ -13,7 +13,7 @@ class MasterLog():
             self.log = pd.DataFrame()
 
     def add_dict(self, dict):
-        new_df = pd.DataFrame.from_dict(dict, index=[0])
+        new_df = pd.DataFrame(dict, index=[0])
         self.log = self.log.append(new_df)
 
     def write_log(self):
