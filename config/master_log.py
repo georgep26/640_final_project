@@ -8,7 +8,7 @@ class MasterLog():
         self.log_file_path = os.path.join(cst.output_dir, "master_log.txt")
         
         if os.path.exists(self.log_file_path):
-            self.log = pd.read_csv(self.log_file_path, index_col=1)
+            self.log = pd.read_csv(self.log_file_path, index_col=0)
         else:
             self.log = pd.DataFrame()
 
