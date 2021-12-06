@@ -117,10 +117,6 @@ model_base = {
     "model": "resnet18"
 }
 
-model_base = {
-    "model": "resnet101"
-}
-
 model_config = {
     "num_labels": 9,
     "dropout": 0.5
@@ -155,6 +151,8 @@ train_config = {
 }
 
 description = "unimodal resnet101 transfer learned slightly smaller batch size higher transform params higher epoch"
+
+image_model_path = "model_exploration/model_results/"
 
 ##################################################
 ##################################################
