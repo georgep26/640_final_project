@@ -4,6 +4,7 @@ from transformers import get_linear_schedule_with_warmup
 from torch import nn
 import numpy as np
 from collections import defaultdict
+import torch.nn.functional as F
 
 
 class TrainModel():
@@ -132,4 +133,36 @@ class TrainModel():
     def get_test_acc(self, test_data_loader):
         test_acc, _ = self.eval_model(test_data_loader)
         return test_acc.item()
+    
+    def get_predictions(self, test_data_loader):
+        model = self.model.eval()
+        review_texts = []
+        predictions = []
+        prediction_probs = []
+        real_values = []
+
+        with torch.no_grad():
+            for d in test_data_loader:
+                texts = d["review_text"]
+                input_ids = d["input_ids"].to(self.device)
+                attention_mask = d["attention_mask"].to(self.device)
+                targets = d["sentiment"].to(self.device)
+
+                outputs = model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask
+                )
+                _, preds = torch.max(outputs, dim=1)
+
+                probs = F.softmax(outputs, dim=1)
+
+                review_texts.extend(texts)
+                predictions.extend(preds)
+                prediction_probs.extend(probs)
+                real_values.extend(targets)
+
+        predictions = torch.stack(predictions).cpu()
+        prediction_probs = torch.stack(prediction_probs).cpu()
+        real_values = torch.stack(real_values).cpu()
+        return review_texts, predictions, prediction_probs, real_values
 

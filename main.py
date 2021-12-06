@@ -12,6 +12,7 @@ from config.config_writer import ConfigWriter
 from datetime import datetime
 import os
 import shutil
+from sklearn.metrics import classification_report
 
 if __name__ == "__main__":
     
@@ -63,11 +64,15 @@ if __name__ == "__main__":
     
     test_acc = session.get_test_acc(test_data_loader)
 
-    # config_writer.add("model_history", master_history)
+    y_review_texts, y_pred, y_pred_probs, y_test = session.get_predictions(test_data_loader)
+
+    config_writer.print(classification_report(y_test, y_pred))
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
     # Copy config file to output directory
     shutil.copy(config_file.__file__, output_dir)
+
+
 
     master_log = MasterLog()
     master_log.add_dict({"model_name": run_name, "model_path": output_dir, "validation_acc": final_val_acc, "test_acc": test_acc})
