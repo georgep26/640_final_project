@@ -1,9 +1,11 @@
 import config.constants as cst
 import config.train_model_config as config
+from config.master_log import MasterLog
 from model_exploration.train_model import TrainModel
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 import pandas as pd
+import numpy as np
 from collections import defaultdict
 from config.config_writer import ConfigWriter
 from datetime import datetime
@@ -11,8 +13,9 @@ import os
 
 if __name__ == "__main__":
     
-    file_name = datetime.now().strftime("%Y%d%m%H%M%S")
-    output_dir = os.path.join(cst.output_dir, f"bert_model_{file_name}")
+    timestamp = datetime.now().strftime("%Y%d%m%H%M%S")
+    run_name = f"bert_model_{timestamp}"
+    output_dir = os.path.join(cst.output_dir, run_name)
     os.mkdir(output_dir)
     config_writer = ConfigWriter(output_dir)
 
@@ -44,17 +47,12 @@ if __name__ == "__main__":
                                                                                         config.bert_baseline_data['batch_size'],
                                                                                         config.bert_baseline_data['num_workers'])
 
-        session = TrainModel(config_writer, **config.bert_baseline_model)
+        session = TrainModel(config_writer, output_dir, **config.bert_baseline_model)
         history = session.train(train_data_loader, validation_data_loader)
         # master_history['train_acc'].append(history['train_acc'])
         # master_history['train_loss'].append(history['train_loss'])
         # master_history['val_acc'].append(history['val_acc'])
         # master_history['val_loss'].append(history['val_loss'])
-
-
-    
-    # config_writer.add("model_history", master_history)
-    config_writer.write()
 
 
     test_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(test_df, 
@@ -64,4 +62,14 @@ if __name__ == "__main__":
                                                                                     config.bert_baseline_data['max_len'],
                                                                                     config.bert_baseline_data['batch_size'],
                                                                                     config.bert_baseline_data['num_workers'])
+    
+    
+    # config_writer.add("model_history", master_history)
+    config_writer.add("model_configuration", config.bert_baseline_model)
+    config_writer.write()
+    final_val_acc = np.mean(config_writer.config['val_acc_max'])
+
+    master_log = MasterLog()
+    master_log.add_dict({"model_name": run_name, "model_path": output_dir, "validation_acc": final_val_acc})
+    master_log.write_log()
     

@@ -44,6 +44,8 @@ data_paths = {
 
 output_dir = "model_exploration/model_results"
 
+master_log_path = "model_exploration/model_results/"
+
 ##################################################
 # config for train test split
 ##################################################

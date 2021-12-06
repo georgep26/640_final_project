@@ -1,5 +1,5 @@
 import torch
-
+import os
 from transformers import get_linear_schedule_with_warmup
 from torch import nn
 import numpy as np
@@ -8,8 +8,9 @@ from collections import defaultdict
 
 class TrainModel():
 
-    def __init__(self, config_writer, model_name, optimizer, loss_fn, num_classes, num_epochs):
+    def __init__(self, config_writer, output_dir, model_name, optimizer, loss_fn, num_classes, num_epochs):
         self.log = config_writer
+        self.output_dir = output_dir
         self.model = model_name
         self.optimizer = optimizer
         self.loss_fn = loss_fn
@@ -118,7 +119,7 @@ class TrainModel():
             history['val_loss'].append(val_loss)
 
             if val_acc > best_accuracy:
-                torch.save(self.model.state_dict(), 'best_model_state.bin')
+                torch.save(self.model.state_dict(), os.path.join(self.output_dir, 'best_model_state.bin'))
                 best_accuracy = val_acc
         
         self.log.add("train_acc", history['train_acc'])
