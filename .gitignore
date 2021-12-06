@@ -1,7 +1,9 @@
 .vscode
 .idea
+__pycache__/
 out/
 *.iml.vscode
 *.bin
 *.o*
 *.pyc
+
