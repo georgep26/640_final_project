@@ -9,7 +9,7 @@ class ConfigWriter:
 
     def add(self, title, item):
         if title in self.config.keys():
-            self.config[title] = self.config[title].extend(item)
+            self.config[title].extend(item)
         else:
             self.config[title] = item
 
