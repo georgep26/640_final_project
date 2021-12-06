@@ -45,10 +45,13 @@ class TrainModel():
             input_ids = d["input_ids"].to(self.device)
             attention_mask = d["attention_mask"].to(self.device)
             sentiment = d["classification"].to(self.device)
+            image = d["image"]
+
             
             outputs = self.model(
                 input_ids=input_ids,
-                attention_mask=attention_mask
+                attention_mask=attention_mask,
+                image = image
             )
 
             _, preds = torch.max(outputs, dim=1)
@@ -78,10 +81,12 @@ class TrainModel():
                 input_ids = d["input_ids"].to(self.device)
                 attention_mask = d["attention_mask"].to(self.device)
                 sentiment = d["classification"].to(self.device)
+                image = d["image"]
 
                 outputs = self.model(
                     input_ids=input_ids,
-                    attention_mask=attention_mask
+                    attention_mask=attention_mask,
+                    image = image
                 )
                 _, preds = torch.max(outputs, dim=1)
                 loss = self.loss_fn(outputs, sentiment)

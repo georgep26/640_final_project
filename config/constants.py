@@ -114,7 +114,7 @@ dataset_config = {
 }
 
 model_base = {
-    "model": "resnet18"
+    "model": "resnet50"
 }
 
 model_config = {
@@ -152,7 +152,7 @@ train_config = {
 
 description = "unimodal resnet101 transfer learned slightly smaller batch size higher transform params higher epoch"
 
-image_model_path = "model_exploration/model_results/"
+image_model_path = "model_exploration/model_results/unimodal_image_20210512215552/best_model_state.bin"
 
 ##################################################
 ##################################################

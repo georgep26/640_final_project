@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from skimage import io
 import os
-import transforms
+from torchvision import transforms
 
 
 class MultimodalDataset(Dataset):

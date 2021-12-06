@@ -5,9 +5,25 @@ import torch.nn.functional as F
 import transformers
 from transformers import BertModel, BertTokenizer, AdamW
 
-from model_exploration.image_classification import ImageModel
+# from model_exploration.image_classification import ImageModel
 from model_exploration.models.bert_model_HW5_baseline import BERTTextClassifierBase
 
+class ImageModel(nn.Module):
+    def __init__(self, base_model, num_labels, dropout=0.5):
+        super(ImageModel, self).__init__()
+        self.base_model = base_model
+        # I know the last layer in resnet is fc by looking at code, this may not generalize with other models
+        # reset the last layer of resnet to a fresh fc layer to learn new classification
+        # TODO can add extra layer here
+        # TODO dropout? dont think I can add before last fc layer
+        # TODO how about freezing layers?
+        last_layer_in_size = base_model.fc.in_features
+        self.base_model.fc = nn.Linear(last_layer_in_size, num_labels)
+        self.drop = nn.Dropout(dropout)
+
+    def forward(self, image):
+        x = self.base_model(image)
+        return x
 
 class BERTTextModelMultimodal(BERTTextClassifierBase):
     def __init__(self, n_classes, freeze_weights, state_dict_path):
