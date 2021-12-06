@@ -44,6 +44,10 @@ data_paths = {
     "preprocessed_test_data": os.path.join(data_dirs['preprocessed'], "data_test.csv")
 }
 
+output_dir = "model_exploration/model_results"
+
+master_log_path = "model_exploration/model_results/"
+
 ##################################################
 # config for train test split
 ##################################################

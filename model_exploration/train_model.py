@@ -1,27 +1,32 @@
 import torch
-
+import os
 from transformers import get_linear_schedule_with_warmup
 from torch import nn
 import numpy as np
 from collections import defaultdict
+import torch.nn.functional as F
 
 
 class TrainModel():
 
-    def __init__(self, model_name, optimizer, loss_fn, num_classes, num_epochs):
-        self.model = model_name
+    def __init__(self, config_writer, output_dir, model_name, model_class, optimizer, loss_fn, num_classes, num_epochs, dropout):
+        self.log = config_writer
+        self.output_dir = output_dir
+        self.model_name = model_name
+        self.model = model_class
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.num_classes = num_classes
         self.num_epochs = num_epochs
+        self.dropout = dropout
 
         
     def select_hardware(self):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        print(f"DEVICE: {self.device}")
+        self.log.print(f"DEVICE: {self.device}")
 
     def model_setup(self):
-        self.model = self.model(self.num_classes)
+        self.model = self.model(self.num_classes, self.dropout)
         self.model.to(self.device)
     
     def train_epoch(self, data_loader):
@@ -85,7 +90,7 @@ class TrainModel():
 
 
     def train(self, train_data_loader, validation_data_loader):
-        print("Training model...")
+        self.log.print("Training model...")
         self.select_hardware()
         self.model_setup()
 
@@ -99,24 +104,68 @@ class TrainModel():
 
         for epoch in range(self.num_epochs):
 
-            print(f'Epoch {epoch + 1}/{self.num_epochs}')
-            print('-' * 10)
+            self.log.print(f'Epoch {epoch + 1}/{self.num_epochs}')
+            self.log.print('-' * 10)
 
             train_acc, train_loss = self.train_epoch(train_data_loader)
             
-            print(f'Train loss {train_loss} accuracy {train_acc}')
+            self.log.print(f'Train loss {train_loss} accuracy {train_acc}')
 
             val_acc, val_loss = self.eval_model(validation_data_loader)
             
-            print(f'Val   loss {val_loss} accuracy {val_acc}')
-            print()
+            self.log.print(f'Val   loss {val_loss} accuracy {val_acc}')
+            self.log.print("")
 
-            history['train_acc'].append(train_acc)
+            history['train_acc'].append(train_acc.item())
             history['train_loss'].append(train_loss)
-            history['val_acc'].append(val_acc)
+            history['val_acc'].append(val_acc.item())
             history['val_loss'].append(val_loss)
 
             if val_acc > best_accuracy:
-                torch.save(self.model.state_dict(), 'best_model_state.bin')
+                torch.save(self.model.state_dict(), os.path.join(self.output_dir, 'best_model_state.bin'))
                 best_accuracy = val_acc
+        
+        self.log.add("train_acc", history['train_acc'])
+        self.log.add("train_loss", history['train_loss'])
+        self.log.add("val_acc", history['val_acc'])
+        self.log.add("val_loss", history['val_loss'])
+        self.log.add("val_acc_max", max(history['val_acc']))
+        self.log.print(str(self.model))
+        return self.log
+
+    def get_test_acc(self, test_data_loader):
+        test_acc, _ = self.eval_model(test_data_loader)
+        return test_acc.item()
+    
+    def get_predictions(self, test_data_loader):
+        model = self.model.eval()
+        review_texts = []
+        predictions = []
+        prediction_probs = []
+        real_values = []
+
+        with torch.no_grad():
+            for d in test_data_loader:
+                texts = d["text"]
+                input_ids = d["input_ids"].to(self.device)
+                attention_mask = d["attention_mask"].to(self.device)
+                targets = d["classification"].to(self.device)
+
+                outputs = model(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask
+                )
+                _, preds = torch.max(outputs, dim=1)
+
+                probs = F.softmax(outputs, dim=1)
+
+                review_texts.extend(texts)
+                predictions.extend(preds)
+                prediction_probs.extend(probs)
+                real_values.extend(targets)
+
+        predictions = torch.stack(predictions).cpu()
+        prediction_probs = torch.stack(prediction_probs).cpu()
+        real_values = torch.stack(real_values).cpu()
+        return review_texts, predictions, prediction_probs, real_values
 

@@ -1,17 +1,15 @@
 """
-BERT Model for Classification from HW 5
+BERT Model for Classification with additional hidden layers
 """
 import torch
 from torch import nn
-from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
-import transformers 
-from transformers import BertModel, BertTokenizer, AdamW
+from transformers import BertModel
 
-class BERTTextClassifierBase(nn.Module):
+class BERTTextClassifierBaseDeep(nn.Module):
 
   def __init__(self, n_classes, dropout):
-    super(BERTTextClassifierBase, self).__init__()
+    super(BERTTextClassifierBaseDeep, self).__init__()
     self.bert = BertModel.from_pretrained('bert-base-cased', return_dict=False)
     self.drop = nn.Dropout(p=dropout)
     self.hidden = nn.Linear(self.bert.config.hidden_size, 256)
@@ -24,7 +22,9 @@ class BERTTextClassifierBase(nn.Module):
     )
     output = self.drop(pooled_output)
     output = self.hidden(output)
+    output = self.drop(pooled_output)
+    output = self.hidden(output)
+    output = self.drop(pooled_output)
+    output = self.hidden(output)
     output = F.relu(self.drop(output))
     return self.out(output)
-
-
