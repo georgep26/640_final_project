@@ -10,8 +10,9 @@ from model_exploration.models.bert_model_HW5_baseline import BERTTextClassifierB
 
 
 class BERTTextModelMultimodal(BERTTextClassifierBase):
-    def __init__(self, n_classes, freeze_weights):
+    def __init__(self, n_classes, freeze_weights, state_dict_path):
         super(BERTTextModelMultimodal, self).__init__(n_classes)
+        self.load_state_dict(torch.load(state_dict_path))
 
         if freeze_weights:
             for param in self.parameters():
@@ -57,7 +58,7 @@ class ImageModelMultiMode(ImageModel):
 
 
 class MultimodalClassifier(nn.Module):
-    def __init__(self, n_classes, base_image_model, image_model_path, dropout=0.5):
+    def __init__(self, n_classes, base_image_model, image_model_path, bert_model_path, dropout=0.5):
         super(MultimodalClassifier, self).__init__()
         self.image_model = ImageModelMultiMode(num_labels=n_classes,
                                                base_model=base_image_model,
@@ -65,7 +66,8 @@ class MultimodalClassifier(nn.Module):
                                                state_dict_path=image_model_path,
                                                freeze_weights=True)
         self.bert = BERTTextModelMultimodal(n_classes=n_classes,
-                                            freeze_weights=True)
+                                            freeze_weights=True,
+                                            state_dict_path=bert_model_path)
 
         # might be able to config these
         self.fc1 = nn.Linear(256 + 512, 256)
