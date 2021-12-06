@@ -1,0 +1,27 @@
+#!/bin/bash -l
+
+# Request 1 core. This will set NSLOTS=1
+#$ -pe omp 1
+
+# Request 1 GPU
+#$ -l gpus=1
+
+# Request at least compute capability 6.0
+#$ -l gpu_c=6.0
+
+# Give the job a name
+#$ -N unimode_img_model
+
+# Combine output and error stream
+#$ -j y
+
+# send email
+#$ -M ea
+
+# load modules
+module load python3/3.8.6 
+module load pytorch/1.7.0
+
+# Run the test script
+python /projectnb/cs640g/students/jd9/640_final_project/model_exploration/image_classification.py
+

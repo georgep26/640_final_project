@@ -1,0 +1,63 @@
+{
+    "dataset_config": {
+        "train_image_dataset": {
+            "image_dir": "data/images",
+            "label_col": "Q3 Theme1",
+            "image_id_col": "imageID"
+        },
+        "val_image_dataset": {
+            "image_dir": "data/images",
+            "label_col": "Q3 Theme1",
+            "image_id_col": "imageID"
+        },
+        "train_downsample_frac": 1
+    },
+    "model_config": {
+        "num_labels": 9,
+        "dropout": 0.5
+    },
+    "loader_config": {
+        "batch_size": 64
+    },
+    "train_config": {
+        "num_epochs": 7,
+        "learning_rate": 2e-05,
+        "train_ds_config": {
+            "image_dir": "data/images",
+            "label_col": "Q3 Theme1",
+            "image_id_col": "imageID"
+        },
+        "val_ds_config": {
+            "image_dir": "data/images",
+            "label_col": "Q3 Theme1",
+            "image_id_col": "imageID"
+        },
+        "model_config": {
+            "num_labels": 9,
+            "dropout": 0.5
+        },
+        "loader_config": {
+            "batch_size": 64
+        }
+    },
+    "transform_config": {
+        "train": {
+            "image_shape": [
+                224,
+                224
+            ],
+            "horizontal_flip": {
+                "p": 0.5
+            },
+            "rotation": {
+                "degrees": 15
+            }
+        },
+        "inference": {
+            "image_shape": [
+                224,
+                224
+            ]
+        }
+    }
+}

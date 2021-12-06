@@ -26,11 +26,13 @@ q3_theme_labels = {
 }
 
 data_root = "data"
+modeling_root = "model_exploration"
 data_dirs = {
     "raw_data": os.path.join(data_root, "raw_data"),
     "data_root": data_root,
     "images": os.path.join(data_root, "images"),
-    "preprocessed": os.path.join(data_root, "preprocessed_data")
+    "preprocessed": os.path.join(data_root, "preprocessed_data"),
+    "model_results": os.path.join(modeling_root, "model_results")
 }
 
 data_paths = {
@@ -98,14 +100,21 @@ dataset_config = {
         "image_dir": data_dirs['images'],
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
-        "train_data": True
     },
     "val_image_dataset": {
         "image_dir": data_dirs['images'],
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
-        "train_data": False
-    }
+    },
+    "train_downsample_frac": .001
+}
+
+model_base = {
+    "model": "resnet18"
+}
+
+model_base = {
+    "model": "resnet101"
 }
 
 model_config = {
@@ -117,14 +126,31 @@ loader_config = {
     "batch_size": 16
 }
 
+transform_config = {
+    "train": {
+        "image_shape": (224, 224),
+        "horizontal_flip": {
+            "p": 0.5
+        },
+        "rotation": {
+            "degrees": 25
+        }
+        },
+    "inference": {
+        "image_shape": (224, 224),
+    }
+}
+
 train_config = {
-    "num_epochs": 5,
+    "num_epochs": 10,
     "learning_rate": 2e-5,
     "train_ds_config": dataset_config['train_image_dataset'],
     "val_ds_config": dataset_config['val_image_dataset'],
     "model_config": model_config,
     "loader_config": loader_config
 }
+
+description = "unimodal resnet101 transfer learned slightly smaller batch size higher transform params higher epoch"
 
 ##################################################
 ##################################################
