@@ -108,6 +108,10 @@ dataset_config = {
     "train_downsample_frac": 1
 }
 
+model_base = {
+    "model": "resnet101"
+}
+
 model_config = {
     "num_labels": 9,
     "dropout": 0.5
@@ -124,7 +128,7 @@ transform_config = {
             "p": 0.5
         },
         "rotation": {
-            "degrees": 15
+            "degrees": 25
         }
         },
     "inference": {
@@ -133,7 +137,7 @@ transform_config = {
 }
 
 train_config = {
-    "num_epochs": 5,
+    "num_epochs": 10,
     "learning_rate": 2e-5,
     "train_ds_config": dataset_config['train_image_dataset'],
     "val_ds_config": dataset_config['val_image_dataset'],
@@ -141,7 +145,7 @@ train_config = {
     "loader_config": loader_config
 }
 
-description = "unimodal resnet18 transfer learned"
+description = "unimodal resnet101 transfer learned slightly smaller batch size higher transform params higher epoch"
 
 ##################################################
 ##################################################
