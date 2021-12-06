@@ -17,7 +17,8 @@ from sklearn.metrics import classification_report
 if __name__ == "__main__":
     
     timestamp = datetime.now().strftime("%Y%d%m%H%M%S")
-    run_name = f"bert_model_{timestamp}"
+    model_name = config.bert_baseline_model['model_name']
+    run_name = f"{model_name}_{timestamp}"
     output_dir = os.path.join(cst.output_dir, run_name)
     os.mkdir(output_dir)
     config_writer = ConfigWriter(output_dir)

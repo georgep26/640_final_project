@@ -9,10 +9,11 @@ import torch.nn.functional as F
 
 class TrainModel():
 
-    def __init__(self, config_writer, output_dir, model_name, optimizer, loss_fn, num_classes, num_epochs):
+    def __init__(self, config_writer, output_dir, model_name, model_class, optimizer, loss_fn, num_classes, num_epochs):
         self.log = config_writer
         self.output_dir = output_dir
-        self.model = model_name
+        self.model_name = model_name
+        self.model = model_class
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.num_classes = num_classes
@@ -143,10 +144,10 @@ class TrainModel():
 
         with torch.no_grad():
             for d in test_data_loader:
-                texts = d["review_text"]
+                texts = d["text"]
                 input_ids = d["input_ids"].to(self.device)
                 attention_mask = d["attention_mask"].to(self.device)
-                targets = d["sentiment"].to(self.device)
+                targets = d["classification"].to(self.device)
 
                 outputs = model(
                     input_ids=input_ids,
