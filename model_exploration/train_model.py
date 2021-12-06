@@ -110,7 +110,7 @@ class TrainModel():
             val_acc, val_loss = self.eval_model(validation_data_loader)
             
             self.log.print(f'Val   loss {val_loss} accuracy {val_acc}')
-            self.log.print()
+            self.log.print("")
 
             history['train_acc'].append(train_acc.item())
             history['train_loss'].append(train_loss)

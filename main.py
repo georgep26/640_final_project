@@ -12,7 +12,7 @@ import os
 if __name__ == "__main__":
     
     file_name = datetime.now().strftime("%Y%d%m%H%M%S")
-    output_dir = os.path.join(cst.output_dir, "bert_model_{file_name}")
+    output_dir = os.path.join(cst.output_dir, f"bert_model_{file_name}")
     os.mkdir(output_dir)
     config_writer = ConfigWriter(output_dir)
 
@@ -58,10 +58,10 @@ if __name__ == "__main__":
 
 
     test_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(test_df, 
-                                                                                        config.bert_baseline_data['text_col'],
-                                                                                        config.bert_baseline_data['pred_col'],
-                                                                                        config.bert_baseline_data['tokenizer'],
-                                                                                        config.bert_baseline_data['max_len'],
-                                                                                        config.bert_baseline_data['batch_size'],
-                                                                                        config.bert_baseline_data['num_workers'])
+                                                                                    config.bert_baseline_data['text_col'],
+                                                                                    config.bert_baseline_data['pred_col'],
+                                                                                    config.bert_baseline_data['tokenizer'],
+                                                                                    config.bert_baseline_data['max_len'],
+                                                                                    config.bert_baseline_data['batch_size'],
+                                                                                    config.bert_baseline_data['num_workers'])
     
