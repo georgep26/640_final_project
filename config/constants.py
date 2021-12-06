@@ -114,7 +114,7 @@ dataset_config = {
 }
 
 model_base = {
-    "model": "resnet50"
+    "model": "resnet101"
 }
 
 model_config = {
