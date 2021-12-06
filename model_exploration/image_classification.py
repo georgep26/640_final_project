@@ -248,7 +248,16 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
         val_df = df.iloc[val_index]
         train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
-        res_mod = models.resnet18(pretrained=True)
+
+        if constants.model_config["model"] == "resnet18":
+            res_mod = models.resnet18(pretrained=True)
+        elif constants.model_config["model"] == "resnet50":
+            res_mod = models.resnet50(pretrained=True)
+        elif constants.model_config["model"] == "resnet101":
+            res_mod = models.resnet50(pretrained=True)
+        else:
+            raise("invalid model selection")
+
         history = train_func(res_mod, train_df, val_df, output_dir, constants.transform_config, **constants.train_config)
         create_training_plot(history, output_dir, title_modifier=count)
         master_history['train_acc'].append(history['train_acc'])
