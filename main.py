@@ -70,6 +70,7 @@ if __name__ == "__main__":
     config_writer.print(classification_report(y_test, y_pred))
     config_writer.print(confusion_matrix(y_test, y_pred))
     
+    
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
     # Copy config file to output directory
