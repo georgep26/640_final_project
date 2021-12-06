@@ -110,10 +110,6 @@ dataset_config = {
 }
 
 model_base = {
-    "model": "resnet18"
-}
-
-model_base = {
     "model": "resnet101"
 }
 
