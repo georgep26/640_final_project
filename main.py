@@ -1,8 +1,8 @@
 import config.train_model_config as config_file
 import config.constants as cst
-import config.train_model_config as config
+import config.multimodal_config as config
 from config.master_log import MasterLog
-from model_exploration.train_model import TrainModel
+from model_exploration.train_multimodel import TrainModel
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 import pandas as pd
@@ -13,6 +13,7 @@ from datetime import datetime
 import os
 import shutil
 from sklearn.metrics import classification_report, confusion_matrix
+from torchvision import models
 
 if __name__ == "__main__":
     
@@ -35,7 +36,35 @@ if __name__ == "__main__":
     for train_index, val_index in kf.split(train_df):
         validation_df, train_df2 = train_df.iloc[val_index], train_df.iloc[train_index]
         # Get data loaders
+        # train_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(train_df2, 
+        #                                                                                 config.bert_baseline_data['text_col'],
+        #                                                                                 config.bert_baseline_data['pred_col'],
+        #                                                                                 config.bert_baseline_data['tokenizer'],
+        #                                                                                 config.bert_baseline_data['max_len'],
+        #                                                                                 config.bert_baseline_data['batch_size'],
+        #                                                                                 config.bert_baseline_data['num_workers'])
+        
+        # validation_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(validation_df, 
+        #                                                                                 config.bert_baseline_data['text_col'],
+        #                                                                                 config.bert_baseline_data['pred_col'],
+        #                                                                                 config.bert_baseline_data['tokenizer'],
+        #                                                                                 config.bert_baseline_data['max_len'],
+        #                                                                                 config.bert_baseline_data['batch_size'],
+        #                                                                                 config.bert_baseline_data['num_workers'])
+
+        # Reading image config 
+        if cst.model_base["model"] == "resnet18":
+            base_image_model = models.resnet18(pretrained=True)
+        elif cst.model_base["model"] == "resnet50":
+            base_image_model = models.resnet50(pretrained=True)
+        elif cst.model_base["model"] == "resnet101":
+            base_image_model = models.resnet50(pretrained=True)
+        else:
+            raise("invalid model selection")
+
         train_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(train_df2, 
+                                                                                        cst.transform_config,
+                                                                                        cst.dataset_config["train_image_dataset"],
                                                                                         config.bert_baseline_data['text_col'],
                                                                                         config.bert_baseline_data['pred_col'],
                                                                                         config.bert_baseline_data['tokenizer'],
@@ -44,6 +73,8 @@ if __name__ == "__main__":
                                                                                         config.bert_baseline_data['num_workers'])
         
         validation_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(validation_df, 
+                                                                                        cst.transform_config,
+                                                                                        cst.dataset_config["train_image_dataset"],
                                                                                         config.bert_baseline_data['text_col'],
                                                                                         config.bert_baseline_data['pred_col'],
                                                                                         config.bert_baseline_data['tokenizer'],
@@ -51,11 +82,13 @@ if __name__ == "__main__":
                                                                                         config.bert_baseline_data['batch_size'],
                                                                                         config.bert_baseline_data['num_workers'])
 
-        session = TrainModel(config_writer, output_dir, **config.bert_baseline_model)
+        session = TrainModel(config_writer, output_dir, base_image_model, cst.image_model_path, **config.bert_baseline_model)
         history = session.train(train_data_loader, validation_data_loader)
 
 
     test_data_loader = config.bert_baseline_data['dataset_type'].create_data_loader(test_df, 
+                                                                                    cst.transform_config,
+                                                                                    cst.dataset_config["train_image_dataset"],
                                                                                     config.bert_baseline_data['text_col'],
                                                                                     config.bert_baseline_data['pred_col'],
                                                                                     config.bert_baseline_data['tokenizer'],
@@ -70,7 +103,7 @@ if __name__ == "__main__":
     config_writer.print(classification_report(y_test, y_pred))
     config_writer.print(confusion_matrix(y_test, y_pred))
     
-    
+
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
     # Copy config file to output directory

@@ -3,6 +3,8 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import io
 import os
+import transforms
+
 
 class MultimodalDataset(Dataset):
 
@@ -57,7 +59,7 @@ class MultimodalDataset(Dataset):
         'classification': torch.tensor(Y, dtype=torch.long)
         }
 
-def create_data_loader(df, image_config, x_cols, y_col, tokenizer, max_len, batch_size, num_workers):
+def create_data_loader(df, transform_config, image_config, x_cols, y_col, tokenizer, max_len, batch_size, num_workers):
     '''
     Creates a DataLoader object
     '''
@@ -65,6 +67,22 @@ def create_data_loader(df, image_config, x_cols, y_col, tokenizer, max_len, batc
     df["X"] = ""
     for col in x_cols:
         df["X"] = df["X"] + " " + df[col]
+    
     # Create DataSet
-    ds = MultimodalDataset(text=df["X"], classification=df[y_col], tokenizer=tokenizer, max_len=max_len)
+    ds = MultimodalDataset(text=df["X"], transformers=build_transfroms(transform_config['train']), image_dir=image_config["image_dir"], label_col=image_config["label_col"], image_id_col=image_config["image_id_col"], classification=df[y_col], tokenizer=tokenizer, max_len=max_len)
     return DataLoader(ds, batch_size=batch_size, num_workers=num_workers)
+
+def build_transfroms(transform_config):
+    tfm_list = []
+    tfm_list.append(transforms.ToPILImage())
+    tfm_list.append(transforms.Resize(transform_config['image_shape']))
+
+    if "horizontal_flip" in transform_config.keys():
+        tfm_list.append(transforms.RandomHorizontalFlip(**transform_config['horizontal_flip']))
+
+    if "rotation" in transform_config.keys():
+        tfm_list.append(transforms.RandomRotation(**transform_config['rotation']))
+
+    tfm_list.append(transforms.ToTensor())
+
+    return transforms.Compose(tfm_list)
