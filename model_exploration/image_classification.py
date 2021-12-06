@@ -249,11 +249,11 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         val_df = df.iloc[val_index]
         train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
 
-        if constants.model_config["model"] == "resnet18":
+        if constants.model_base["model"] == "resnet18":
             res_mod = models.resnet18(pretrained=True)
-        elif constants.model_config["model"] == "resnet50":
+        elif constants.model_base["model"] == "resnet50":
             res_mod = models.resnet50(pretrained=True)
-        elif constants.model_config["model"] == "resnet101":
+        elif constants.model_base["model"] == "resnet101":
             res_mod = models.resnet50(pretrained=True)
         else:
             raise("invalid model selection")
