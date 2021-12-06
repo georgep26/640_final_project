@@ -10,10 +10,10 @@ from transformers import BertModel, BertTokenizer, AdamW
 
 class BERTTextClassifierBase(nn.Module):
 
-  def __init__(self, n_classes):
+  def __init__(self, n_classes, dropout):
     super(BERTTextClassifierBase, self).__init__()
     self.bert = BertModel.from_pretrained('bert-base-cased', return_dict=False)
-    self.drop = nn.Dropout(p=0.5)
+    self.drop = nn.Dropout(p=dropout)
     self.hidden = nn.Linear(self.bert.config.hidden_size, 256)
     self.out = nn.Linear(256, n_classes)
   
