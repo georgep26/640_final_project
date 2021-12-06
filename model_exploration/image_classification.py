@@ -52,26 +52,6 @@ class image_dataset(Dataset):
         self.image_id_col = image_id_col
         self.transform = transforms
 
-        # if train_data:
-        #     # train data transforms
-        #     self.transform = transforms.Compose([
-        #         transforms.ToPILImage(),
-        #         transforms.Resize((224, 224)),
-        #         # transforms.RandomHorizontalFlip(p=0.5),
-        #         # transforms.RandomRotation(degrees=15),
-        #         transforms.ToTensor()
-        #         # transforms.Normalize()
-        #     ])
-        #     pass
-        # else:
-        #     # inference transforms
-        #     self.transform = transforms.Compose([
-        #         transforms.ToPILImage(),
-        #         transforms.Resize((224, 224)),
-        #         transforms.ToTensor()
-        #     ])
-        #     pass
-
     def __len__(self):
         return self.df.shape[0]
 
