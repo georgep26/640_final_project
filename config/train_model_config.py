@@ -21,7 +21,7 @@ bert_baseline_data = {
     "test_data_loc": "data/preprocessed_data/data_test.csv",
     "dataset_type": text_dataset,
     "tokenizer": BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=True),
-    "text_col": ["headline"],
+    "text_col": ["headline", "google_visual_api_web_entities_detection_on_lead_image"],
     "pred_col": "Q3 Theme1",
     "num_workers": 4,
     "max_len": 50,
