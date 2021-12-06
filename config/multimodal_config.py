@@ -3,6 +3,7 @@ from model_exploration.models.bert_model_deep import BERTTextClassifierBaseDeep
 from model_exploration.models.multimodal import MultimodalClassifier
 
 import model_exploration.datasets.bert_text_encoding_dataset as text_dataset
+import model_exploration.datasets.multimodal_dataset as multimodal_dataset
 from torch import nn
 from transformers import BertModel, BertTokenizer, AdamW
 
@@ -21,7 +22,7 @@ bert_baseline_model = {
 bert_baseline_data = {
     "train_data_loc": "data/preprocessed_data/data_train.csv",
     "test_data_loc": "data/preprocessed_data/data_test.csv",
-    "dataset_type": text_dataset,
+    "dataset_type": multimodal_dataset,
     "tokenizer": BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=True),
     "text_col": ["headline"],
     "pred_col": "Q3 Theme1",
