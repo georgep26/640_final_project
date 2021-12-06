@@ -125,6 +125,6 @@ class TrainModel():
         self.log.add("train_loss", history['train_loss'])
         self.log.add("val_acc", history['val_acc'])
         self.log.add("val_loss", history['val_loss'])
-        # self.log.add("val_acc_max", max(history['val_acc']))
+        self.log.add("val_acc_max", max(history['val_acc']))
         return self.log
 
