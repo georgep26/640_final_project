@@ -8,7 +8,8 @@ from collections import defaultdict
 
 class TrainModel():
 
-    def __init__(self, model_name, optimizer, loss_fn, num_classes, num_epochs):
+    def __init__(self, config_writer, model_name, optimizer, loss_fn, num_classes, num_epochs):
+        self.log = config_writer
         self.model = model_name
         self.optimizer = optimizer
         self.loss_fn = loss_fn
@@ -18,7 +19,7 @@ class TrainModel():
         
     def select_hardware(self):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        print(f"DEVICE: {self.device}")
+        self.log.print(f"DEVICE: {self.device}")
 
     def model_setup(self):
         self.model = self.model(self.num_classes)
@@ -85,7 +86,7 @@ class TrainModel():
 
 
     def train(self, train_data_loader, validation_data_loader):
-        print("Training model...")
+        self.log.print("Training model...")
         self.select_hardware()
         self.model_setup()
 
@@ -99,17 +100,17 @@ class TrainModel():
 
         for epoch in range(self.num_epochs):
 
-            print(f'Epoch {epoch + 1}/{self.num_epochs}')
-            print('-' * 10)
+            self.log.print(f'Epoch {epoch + 1}/{self.num_epochs}')
+            self.log.print('-' * 10)
 
             train_acc, train_loss = self.train_epoch(train_data_loader)
             
-            print(f'Train loss {train_loss} accuracy {train_acc}')
+            self.log.print(f'Train loss {train_loss} accuracy {train_acc}')
 
             val_acc, val_loss = self.eval_model(validation_data_loader)
             
-            print(f'Val   loss {val_loss} accuracy {val_acc}')
-            print()
+            self.log.print(f'Val   loss {val_loss} accuracy {val_acc}')
+            self.log.print()
 
             history['train_acc'].append(train_acc.item())
             history['train_loss'].append(train_loss)
@@ -120,5 +121,9 @@ class TrainModel():
                 torch.save(self.model.state_dict(), 'best_model_state.bin')
                 best_accuracy = val_acc
         
-        return history
+        self.log.add("train_acc", history['train_acc'])
+        self.log.add("train_loss", history['train_loss'])
+        self.log.add("val_acc", history['val_acc'])
+        self.log.add("val_loss", history['val_loss'])
+        return self.log
 
