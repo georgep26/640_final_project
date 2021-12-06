@@ -105,7 +105,11 @@ dataset_config = {
         "label_col": "Q3 Theme1",
         "image_id_col": "imageID",
     },
-    "train_downsample_frac": 1
+    "train_downsample_frac": .001
+}
+
+model_base = {
+    "model": "resnet18"
 }
 
 model_base = {
