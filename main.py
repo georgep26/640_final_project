@@ -65,7 +65,6 @@ if __name__ == "__main__":
     
     
     # config_writer.add("model_history", master_history)
-    config_writer.add("model_configuration", config.bert_baseline_model)
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
 
