@@ -76,7 +76,7 @@ class ImageModelMultiMode(ImageModel):
 class MultimodalClassifier(nn.Module):
     def __init__(self, n_classes, base_image_model, image_model_path, bert_model_path, dropout=0.5):
         super(MultimodalClassifier, self).__init__()
-        self.image_model = ImageModelMultiMode(num_labels=n_classes,
+        self.image_model = ImageModelMultiMode(num_labels=9,
                                                base_model=base_image_model,
                                                dropout=dropout,
                                                state_dict_path=image_model_path,
