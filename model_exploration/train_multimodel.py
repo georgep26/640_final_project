@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 class TrainModel():
 
-    def __init__(self, config_writer, output_dir, base_image_model, image_model_path ,model_name, model_class, optimizer, loss_fn, num_classes, num_epochs, dropout):
+    def __init__(self, config_writer, output_dir, base_image_model, image_model_path, model_name, model_class, optimizer, loss_fn, num_classes, num_epochs, dropout, bert_model_path):
         self.log = config_writer
         self.output_dir = output_dir
         self.model_name = model_name
@@ -21,6 +21,7 @@ class TrainModel():
         self.dropout = dropout
         self.base_image_model = base_image_model
         self.image_model_path = image_model_path
+        self.bert_model_path = bert_model_path
 
         
     def select_hardware(self):
@@ -28,7 +29,7 @@ class TrainModel():
         self.log.print(f"DEVICE: {self.device}")
 
     def model_setup(self):
-        self.model = self.model(self.num_classes, self.base_image_model, self.image_model_path, self.dropout)
+        self.model = self.model(self.num_classes, self.base_image_model, self.image_model_path, self.bert_model_path, self.dropout)
         self.model.to(self.device)
     
     def train_epoch(self, data_loader):
