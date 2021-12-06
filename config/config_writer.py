@@ -11,7 +11,7 @@ class ConfigWriter:
         if title in self.config.keys():
             self.config[title] = self.config[title].append(item)
         else:
-            self.config[title] = [item]
+            self.config[title] = item
 
     def print(self, print_string):
         self.out_string = self.out_string + "\n" + print_string
