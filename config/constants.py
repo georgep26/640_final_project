@@ -38,10 +38,11 @@ data_dirs = {
 data_paths = {
     "raw_text_data": "data/data.xlsx",
     "raw_text_data_csv": "data/data.csv",
-    "train_data": os.path.join(data_dirs['raw_data'], "data_train.csv"),
-    "test_data": os.path.join(data_dirs['raw_data'], "data_test.csv"),
-    "preprocessed_train_data": os.path.join(data_dirs['preprocessed'], "data_train.csv"),
-    "preprocessed_test_data": os.path.join(data_dirs['preprocessed'], "data_test.csv")
+    "train_data": os.path.join(data_dirs['raw_data'], "data_rebal_train.csv"),
+    "test_data": os.path.join(data_dirs['raw_data'], "data_rebal_test.csv"),
+    "preprocessed_train_data": os.path.join(data_dirs['preprocessed'], "data_rebal_train.csv"),
+    "preprocessed_test_data": os.path.join(data_dirs['preprocessed'], "data_rebal_test.csv"),
+    "raw_rebalanced_data": os.path.join(data_dirs['preprocessed'], "rebalanced_data.csv")
 }
 
 output_dir = "model_exploration/model_results"
@@ -55,7 +56,7 @@ master_log_path = "model_exploration/model_results/"
 train_test_args = {
   "get_train_test": {
     "seed": 0,
-    "data_path": data_paths['raw_text_data'],
+    "data_path": data_paths['raw_rebalanced_data'],
     "test_pct": 0.20
   },
 
@@ -90,6 +91,23 @@ clean_image_id = [
         "out_path": data_paths['preprocessed_test_data']
     }
 ]
+
+
+##################################################
+##################################################
+
+##################################################
+# config for dataset rebalance
+##################################################
+
+rebalance_config = {
+    "rebal_input": {
+        "feature_col": "Q3 Theme1",
+        "unique_id_col": "imageID"
+    },
+    "data_path": data_paths['raw_text_data'],
+    "out_path": data_paths['raw_rebalanced_data']
+}
 
 
 ##################################################

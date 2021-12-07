@@ -21,8 +21,8 @@ def id_in_dir(id, image_dir):
 
 
 if __name__ == "__main__":
-    id_in_dir("white", constants.data_dirs['images'])
-    id_in_dir(1, constants.data_dirs['images'])
+    # id_in_dir("white", constants.data_dirs['images'])
+    # id_in_dir(1, constants.data_dirs['images'])
 
     for cfg in constants.clean_image_id:
         df, num_drop = check_imageid_exists(**cfg)

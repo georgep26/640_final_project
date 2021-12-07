@@ -10,7 +10,8 @@ import config.constants as constants
 def get_train_test(data_path, test_pct, seed):
     # TODO we may need to do something here with different frequencies of each label!
 
-    raw_df = pd.read_excel(data_path)
+    # raw_df = pd.read_excel(data_path)
+    raw_df = pd.read_csv(data_path)
     df_train, df_test = train_test_split(raw_df, test_size=test_pct, random_state=seed, shuffle=True)
 
     print(f"Train shape: {df_train.shape}")
