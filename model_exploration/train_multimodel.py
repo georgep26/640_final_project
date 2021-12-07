@@ -45,7 +45,7 @@ class TrainModel():
             input_ids = d["input_ids"].to(self.device)
             attention_mask = d["attention_mask"].to(self.device)
             sentiment = d["classification"].to(self.device)
-            image = d["image"]
+            image = d["image"].to(self.device)
 
             
             outputs = self.model(
