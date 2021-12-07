@@ -159,12 +159,11 @@ def run_multimodal():
                                                                                     multi_config_file.data_config['num_workers'])
     
     test_acc = session.get_test_acc(test_data_loader)
-
     y_review_texts, y_pred, y_pred_probs, y_test = session.get_predictions(test_data_loader)
 
-    print(classification_report(y_test, y_pred))
-    print(confusion_matrix(y_test, y_pred))
-    
+    # Record configuration and outputs
+    config_writer.print(classification_report(y_test, y_pred))
+    # print(confusion_matrix(y_test, y_pred)) # Currently causing an error when using config_writer    
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
     # Copy config file to output directory
@@ -177,7 +176,7 @@ def run_multimodal():
 
 
 if __name__ == "__main__":
-    run_BERT()
-    # run_multimodal()
+    # run_BERT()
+    run_multimodal()
     
     
