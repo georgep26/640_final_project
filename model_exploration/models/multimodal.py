@@ -69,7 +69,7 @@ class ImageModelMultiMode(ImageModel):
 
         # we return this layer representation - a 512 len vector
         x = x.view(x.size(0), -1)
-        # x = self.fc(x)
+        # x = self.base_model.fc(x)
         return x
 
 
