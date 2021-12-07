@@ -88,5 +88,5 @@ def build_transfroms(transform_config):
 
     return transforms.Compose(tfm_list)
 
-def get_image_fname(self, item):
+def get_image_fname(item):
         return f"{item}.jpg"
