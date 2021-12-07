@@ -97,7 +97,7 @@ class MultimodalClassifier(nn.Module):
 
         print(bert_output.size())
         print(img_output.size())
-        concat = torch.cat((bert_output, img_output), 0)
+        concat = torch.cat((bert_output, img_output), 1)
         output = self.drop(concat)
         output = self.fc1(output)
         output = self.drop(output)
