@@ -154,14 +154,25 @@ class TrainModel():
 
         with torch.no_grad():
             for d in test_data_loader:
-                texts = d["text"]
-                input_ids = d["input_ids"].to(self.device)
-                attention_mask = d["attention_mask"].to(self.device)
-                targets = d["classification"].to(self.device)
+                # texts = d["text"]
+                # input_ids = d["input_ids"].to(self.device)
+                # attention_mask = d["attention_mask"].to(self.device)
+                # targets = d["classification"].to(self.device)
 
-                outputs = model(
+                # outputs = model(
+                #     input_ids=input_ids,
+                #     attention_mask=attention_mask
+                # )
+                texts = d["text"]
+                input_ids = d["input_ids"]
+                attention_mask = d["attention_mask"]
+                targets = d["classification"]
+                image = d["image"]
+
+                outputs = self.model(
                     input_ids=input_ids,
-                    attention_mask=attention_mask
+                    attention_mask=attention_mask,
+                    image = image
                 )
                 _, preds = torch.max(outputs, dim=1)
 
