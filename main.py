@@ -144,7 +144,7 @@ def run_multimodal():
                                                                                         multi_config_file.data_config['batch_size'],
                                                                                         multi_config_file.data_config['num_workers'])
 
-        session = train_mm.TrainModel(config_writer, output_dir, base_image_model, cst.image_model_path, **multi_config_file.bert_baseline_model)
+        session = train_mm.TrainModel(config_writer, output_dir, base_image_model, cst.image_model_path, **multi_config_file.model_config)
         history = session.train(train_data_loader, validation_data_loader)
 
 
