@@ -278,6 +278,7 @@ if __name__ == "__main__":
     config_writer.add("loader_config", constants.loader_config)
     config_writer.add("train_config", constants.train_config)
     config_writer.add("transform_config", constants.transform_config)
+    config_writer.add("model_base", constants.model_base)
     config_writer.write()
 
     pd.DataFrame.from_dict(csv_output).to_csv(os.path.join(output_dir, "summary_csv.csv"), index=False)
