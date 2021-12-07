@@ -100,8 +100,8 @@ if __name__ == "__main__":
 
     y_review_texts, y_pred, y_pred_probs, y_test = session.get_predictions(test_data_loader)
 
-    config_writer.print(classification_report(y_test, y_pred))
-    config_writer.print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+    print(confusion_matrix(y_test, y_pred))
     
 
     config_writer.write()
