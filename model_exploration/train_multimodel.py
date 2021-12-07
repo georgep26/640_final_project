@@ -163,11 +163,11 @@ class TrainModel():
                 #     input_ids=input_ids,
                 #     attention_mask=attention_mask
                 # )
-                texts = d["text"]
-                input_ids = d["input_ids"]
-                attention_mask = d["attention_mask"]
-                targets = d["classification"]
-                image = d["image"]
+                texts = d["text"].to(self.device)
+                input_ids = d["input_ids"].to(self.device)
+                attention_mask = d["attention_mask"].to(self.device)
+                targets = d["classification"].to(self.device)
+                image = d["image"].to(self.device)
 
                 outputs = self.model(
                     input_ids=input_ids,
