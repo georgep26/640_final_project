@@ -9,7 +9,7 @@ from transformers import BertModel, BertTokenizer, AdamW
 
 # Config for all BERT model runs
 
-bert_baseline_model = {
+model_config = {
     "model_name": "multimodal",
     "model_class": MultimodalClassifier,
     "optimizer": AdamW,
@@ -20,7 +20,7 @@ bert_baseline_model = {
     "bert_model_path": "model_exploration/model_results/bert_baseline_hw5_25_epochs_20210612094657/best_model_state.bin"
 }
 
-bert_baseline_data = {
+data_config = {
     "train_data_loc": "data/preprocessed_data/data_train.csv",
     "test_data_loc": "data/preprocessed_data/data_test.csv",
     "dataset_type": multimodal_dataset,
