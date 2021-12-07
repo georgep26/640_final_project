@@ -87,8 +87,8 @@ class MultimodalClassifier(nn.Module):
                                             dropout=dropout)
 
         # might be able to config these
-        self.fc1 = nn.Linear(256 + 512, 256)
-        self.fc2 = nn.Linear(256, n_classes)
+        self.fc1 = nn.Linear(256 + 2048, 512)
+        self.fc2 = nn.Linear(512, n_classes)
         self.drop = nn.Dropout(dropout)
 
     def forward(self, input_ids, attention_mask, image):
