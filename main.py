@@ -176,7 +176,7 @@ def run_multimodal():
 
 
 if __name__ == "__main__":
-    # run_BERT()
-    run_multimodal()
+    run_BERT()
+    # run_multimodal()
     
     

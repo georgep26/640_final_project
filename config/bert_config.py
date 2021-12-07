@@ -7,7 +7,7 @@ from transformers import BertModel, BertTokenizer, AdamW
 # Config for all BERT model runs
 
 bert_baseline_model = {
-    "model_name": "bert_baseline_hw5_headline_25",
+    "model_name": "rebal_bert_baseline_hw5_headline_25",
     "model_class": BERTTextClassifierBase,
     "optimizer": AdamW,
     "loss_fn": nn.CrossEntropyLoss(),
@@ -17,8 +17,8 @@ bert_baseline_model = {
 }
 
 bert_baseline_data = {
-    "train_data_loc": "data/preprocessed_data/data_train.csv",
-    "test_data_loc": "data/preprocessed_data/data_test.csv",
+    "train_data_loc": "data/preprocessed_data/data_rebal_train.csv",
+    "test_data_loc": "data/preprocessed_data/data_rebal_test.csv",
     "dataset_type": text_dataset,
     "tokenizer": BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=True),
     "text_col": ["headline"],
