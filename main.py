@@ -1,4 +1,4 @@
-import config.train_model_config as config_file
+import config.multimodal_config as config_file
 import config.constants as cst
 import config.multimodal_config as config
 from config.master_log import MasterLog
