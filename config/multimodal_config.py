@@ -15,7 +15,7 @@ bert_baseline_model = {
     "optimizer": AdamW,
     "loss_fn": nn.CrossEntropyLoss(),
     "num_classes": 10,
-    "num_epochs": 2,
+    "num_epochs": 10,
     "dropout": 0.5,
     "bert_model_path": "model_exploration/model_results/bert_baseline_hw5_25_epochs_20210612094657/best_model_state.bin"
 }
