@@ -4,7 +4,7 @@
 #$ -pe omp 1
 
 # Request 1 GPU
-#$ -l gpus=1
+#$ -l gpus=2
 
 # Request at least compute capability 6.0
 #$ -l gpu_c=6.0
