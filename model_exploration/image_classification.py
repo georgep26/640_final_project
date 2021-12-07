@@ -24,6 +24,7 @@ from collections import defaultdict
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from training_plots import create_training_plot
+from preprocessing.rebalance import rebalance_dataset
 
 
 def build_transfroms(transform_config):
@@ -226,6 +227,9 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         config_writer.print(f"Fold number {count} of 4")
         train_df = df.iloc[train_index]
         train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
+
+        train_df = rebalance_dataset(train_df, **constants.rebalance_config['rebal_input'])
+
         val_df = df.iloc[val_index]
         train_df = train_df.sample(frac=constants.dataset_config['train_downsample_frac'])
 
@@ -274,6 +278,7 @@ if __name__ == "__main__":
     csv_output['4-fold accuracy'].append(acc)
 
     config_writer.add("dataset_config", constants.dataset_config)
+    config_writer.add("data_paths", constants.data_paths)
     config_writer.add("model_config", constants.model_config)
     config_writer.add("loader_config", constants.loader_config)
     config_writer.add("train_config", constants.train_config)
