@@ -1,0 +1,2 @@
+description,execution,4-fold accuracy
+unimodal resnet101 transfer learned slightly smaller batch size higher transform params higher epoch,unimodal_image_20210712185742,0.41385135135135137
