@@ -7,7 +7,7 @@ from transformers import BertModel, BertTokenizer, AdamW
 # Config for all BERT model runs
 
 bert_baseline_model = {
-    "model_name": "bert_baseline_hw5_headline_presum_25_500",
+    "model_name": "bert_baseline_hw5_headline_presum_25_200",
     "model_class": BERTTextClassifierBase,
     "optimizer": AdamW,
     "loss_fn": nn.CrossEntropyLoss(),
