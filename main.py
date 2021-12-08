@@ -83,7 +83,8 @@ def run_BERT():
     y_review_texts, y_pred, y_pred_probs, y_test = session.get_predictions(test_data_loader)
 
     config_writer.print(classification_report(y_test, y_pred))
-    
+    config_writer.print(confusion_matrix(y_test, y_pred))
+
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
     # Copy config file to output directory
