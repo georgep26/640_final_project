@@ -37,6 +37,8 @@ def run_BERT():
     output_dir = os.path.join(cst.output_dir, run_name)
     os.mkdir(output_dir)
     config_writer = ConfigWriter(output_dir)
+    # Copy config file to output directory
+    shutil.copy(bert_config_file.__file__, output_dir)
 
     train_df = pd.read_csv(bert_config_file.bert_baseline_data['train_data_loc'])
     test_df = pd.read_csv(bert_config_file.bert_baseline_data['test_data_loc'])
@@ -87,8 +89,7 @@ def run_BERT():
 
     config_writer.write()
     final_val_acc = np.mean(config_writer.config['val_acc_max'])
-    # Copy config file to output directory
-    shutil.copy(bert_config_file.__file__, output_dir)
+    
 
 
 
