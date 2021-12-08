@@ -144,6 +144,7 @@ def train_model(base_model, train_df, val_df, output_dir, transform_config, num_
     loss_function = nn.CrossEntropyLoss().to(device)
     history = defaultdict(list)
     best_accuracy = 0
+    best_model = None
 
     for epoch in range(num_epochs):
         start_time = time.time()
@@ -168,11 +169,12 @@ def train_model(base_model, train_df, val_df, output_dir, transform_config, num_
         if val_acc > best_accuracy:
             torch.save(model.state_dict(), os.path.join(output_dir, 'best_model_state.bin'))
             best_accuracy = val_acc
+            best_model = model
 
         config_writer.print(f"Epoch elapsed time: {time.time() - start_time}\n")
 
 
-    return history
+    return history, best_model
 
 
 def train_epoch(model, data_loader, loss_func, optimizer, device, n_examples):
@@ -273,16 +275,14 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         else:
             raise("invalid model selection")
 
-        history = train_func(res_mod, train_df, val_df, output_dir, constants.transform_config, **constants.train_config)
+        history, best_model = train_func(res_mod, train_df, val_df, output_dir, constants.transform_config, **constants.train_config)
         create_training_plot(history, output_dir, title_modifier=count)
         master_history['train_acc'].append(history['train_acc'])
         master_history['train_loss'].append(history['train_loss'])
         master_history['val_acc'].append(max(history['val_acc']))
         master_history['val_loss'].append(history['val_loss'])
 
-
-
-    return np.mean(master_history['val_acc'])
+    return np.mean(master_history['val_acc']), best_model
 
 
 if __name__ == "__main__":
@@ -306,14 +306,9 @@ if __name__ == "__main__":
     config_writer = ConfigWriter(output_dir)
 
     df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
-    acc = k_fold_cross_val(df, train_model, output_dir, constants)
+    acc, best_model = k_fold_cross_val(df, train_model, output_dir, constants)
 
     test_df = pd.read_csv(constants.data_paths['preprocessed_test_data'])
-
-    train_ds = image_dataset(train_df, build_transfroms(transform_config['train']), **train_ds_config)
-    val_ds = image_dataset(val_df, build_transfroms(transform_config['inference']), **val_ds_config)
-    train_data_loader = get_data_loader(train_ds, **loader_config)
-    val_data_loader = get_data_loader(val_ds, **loader_config)
 
     test_loader = get_data_loader(
         image_dataset(
@@ -324,20 +319,21 @@ if __name__ == "__main__":
         **constants.loader_config
     )
 
-    if constants.model_base["model"] == "resnet18":
-        res_mod = models.resnet18(pretrained=True)
-    elif constants.model_base["model"] == "resnet50":
-        res_mod = models.resnet50(pretrained=True)
-    elif constants.model_base["model"] == "resnet101":
-        res_mod = models.resnet50(pretrained=True)
-    else:
-        raise ("invalid model selection")
+    # if constants.model_base["model"] == "resnet18":
+    #     res_mod = models.resnet18(pretrained=True)
+    # elif constants.model_base["model"] == "resnet50":
+    #     res_mod = models.resnet50(pretrained=True)
+    # elif constants.model_base["model"] == "resnet101":
+    #     res_mod = models.resnet50(pretrained=True)
+    # else:
+    #     raise ("invalid model selection")
 
-    res_mod.load_state_dict(torch.load(os.path.join(output_dir, "best_model_state.bin")))
+    # res_mod.load_state_dict(torch.load(os.path.join(output_dir, "best_model_state.bin")))
+    # print(os.path.join(output_dir, "best_model_state.bin"))
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = ImageModel(res_mod, **constants.model_config)
-    y_review_texts, y_pred, y_pred_probs, y_test = get_predictions(model, test_loader, device)
+    # model = ImageModel(res_mod, **constants.model_config)
+    y_review_texts, y_pred, y_pred_probs, y_test = get_predictions(best_model, test_loader, device)
 
     # Record configuration and outputs
     config_writer.print(classification_report(y_test, y_pred))
