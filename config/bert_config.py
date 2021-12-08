@@ -24,6 +24,6 @@ bert_baseline_data = {
     "text_col": ["headline", "presum_summary_of_full_article_text"],
     "pred_col": "Q3 Theme1",
     "num_workers": 4,
-    "max_len": 500,
+    "max_len": 200,
     "batch_size": 128,
 }
