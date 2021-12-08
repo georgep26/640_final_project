@@ -21,10 +21,12 @@ from torchvision import datasets, models, transforms
 from torch.utils.data import Dataset, DataLoader
 from skimage import io
 from collections import defaultdict
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 from training_plots import create_training_plot
 from preprocessing.rebalance import rebalance_dataset
+import torch.nn.functional as F
 
 
 def build_transfroms(transform_config):
@@ -169,6 +171,7 @@ def train_model(base_model, train_df, val_df, output_dir, transform_config, num_
 
         config_writer.print(f"Epoch elapsed time: {time.time() - start_time}\n")
 
+
     return history
 
 
@@ -216,6 +219,34 @@ class ConfigWriter:
         with open(os.path.join(self.output_path, "output.txt"), "w") as f:
             f.write(self.out_string)
 
+def get_predictions(model, test_data_loader, device):
+    model = model.eval()
+    review_texts = []
+    predictions = []
+    prediction_probs = []
+    real_values = []
+
+    with torch.no_grad():
+        for entry in test_data_loader:
+
+            img_batch = entry['image'].to(device)
+            label_batch = entry['label'].to(device)
+
+            outputs = model(img_batch)
+            _, preds = torch.max(outputs, dim=1)
+
+            probs = F.softmax(outputs, dim=1)
+
+            # review_texts.extend(texts)
+            predictions.extend(preds)
+            prediction_probs.extend(probs)
+            real_values.extend(label_batch)
+
+    predictions = torch.stack(predictions).cpu()
+    prediction_probs = torch.stack(prediction_probs).cpu()
+    real_values = torch.stack(real_values).cpu()
+    return review_texts, predictions, prediction_probs, real_values
+
 
 def k_fold_cross_val(df, train_func, output_dir, constants):
     # train_df, val_df = train_test_split(df, test_size=.2)
@@ -249,6 +280,8 @@ def k_fold_cross_val(df, train_func, output_dir, constants):
         master_history['val_acc'].append(max(history['val_acc']))
         master_history['val_loss'].append(history['val_loss'])
 
+
+
     return np.mean(master_history['val_acc'])
 
 
@@ -273,8 +306,42 @@ if __name__ == "__main__":
     config_writer = ConfigWriter(output_dir)
 
     df = pd.read_csv(constants.data_paths['preprocessed_train_data'])
-
     acc = k_fold_cross_val(df, train_model, output_dir, constants)
+
+    test_df = pd.read_csv(constants.data_paths['preprocessed_test_data'])
+
+    train_ds = image_dataset(train_df, build_transfroms(transform_config['train']), **train_ds_config)
+    val_ds = image_dataset(val_df, build_transfroms(transform_config['inference']), **val_ds_config)
+    train_data_loader = get_data_loader(train_ds, **loader_config)
+    val_data_loader = get_data_loader(val_ds, **loader_config)
+
+    test_loader = get_data_loader(
+        image_dataset(
+            test_df,
+            build_transfroms(constants.transform_config['inference']),
+            **constants.dataset_config['val_image_dataset']
+        ),
+        **constants.loader_config
+    )
+
+    if constants.model_base["model"] == "resnet18":
+        res_mod = models.resnet18(pretrained=True)
+    elif constants.model_base["model"] == "resnet50":
+        res_mod = models.resnet50(pretrained=True)
+    elif constants.model_base["model"] == "resnet101":
+        res_mod = models.resnet50(pretrained=True)
+    else:
+        raise ("invalid model selection")
+
+    res_mod.load_state_dict(torch.load(os.path.join(output_dir, "best_model_state.bin")))
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = ImageModel(res_mod, **constants.model_config)
+    y_review_texts, y_pred, y_pred_probs, y_test = get_predictions(model, test_loader, device)
+
+    # Record configuration and outputs
+    config_writer.print(classification_report(y_test, y_pred))
+
     csv_output['4-fold accuracy'].append(acc)
 
     config_writer.add("dataset_config", constants.dataset_config)
