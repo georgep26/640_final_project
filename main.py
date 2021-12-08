@@ -10,7 +10,8 @@ from torchvision import models
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
 
-
+# Libraries for preprocessing 
+from preprocessing.rebalance import rebalance_dataset
 
 # Libraries for logging
 from config.master_log import MasterLog
@@ -115,7 +116,9 @@ def run_multimodal():
     master_history = defaultdict(list)
     for train_index, val_index in kf.split(train_df):
         validation_df, train_df2 = train_df.iloc[val_index], train_df.iloc[train_index]
+        train_df2 = rebalance_dataset(train_df2, **cst.rebalance_config['rebal_input'])
        
+
         # Reading image config 
         if cst.model_base["model"] == "resnet18":
             base_image_model = models.resnet18(pretrained=True)
