@@ -17,7 +17,7 @@ model_config = {
     "num_classes": 10,
     "num_epochs": 15,
     "dropout": 0.5,
-    "bert_model_path": "model_exploration/model_results/bert_baseline_hw5_25_epochs_20210612094657/best_model_state.bin"
+    "bert_model_path": "model_exploration/model_results/x_bert_baseline_hw5_headline_google_15_200_20210712222148/best_model_state.bin"
 }
 
 data_config = {
@@ -25,7 +25,7 @@ data_config = {
     "test_data_loc": "data/preprocessed_data/data_test.csv",
     "dataset_type": multimodal_dataset,
     "tokenizer": BertTokenizer.from_pretrained('bert-base-cased', do_lower_case=True),
-    "text_col": ["headline"],
+    "text_col": ["headline", "google_visual_api_web_entities_detection_on_lead_image"],
     "pred_col": "Q3 Theme1",
     "num_workers": 4,
     "max_len": 50,
