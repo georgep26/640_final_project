@@ -10,7 +10,7 @@ from transformers import BertModel, BertTokenizer, AdamW
 # Config for all BERT model runs
 
 model_config = {
-    "model_name": "multimodal",
+    "model_name": "multimodal_headline_google",
     "model_class": MultimodalClassifier,
     "optimizer": AdamW,
     "loss_fn": nn.CrossEntropyLoss(),
