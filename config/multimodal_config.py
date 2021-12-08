@@ -28,6 +28,6 @@ data_config = {
     "text_col": ["headline", "google_visual_api_web_entities_detection_on_lead_image"],
     "pred_col": "Q3 Theme1",
     "num_workers": 4,
-    "max_len": 50,
-    "batch_size": 128,
+    "max_len": 200,
+    "batch_size": 16,
 }
