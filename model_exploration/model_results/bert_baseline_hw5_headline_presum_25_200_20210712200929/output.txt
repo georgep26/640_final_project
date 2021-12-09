@@ -1,0 +1,5 @@
+
+Training model...
+DEVICE: cuda:0
+Epoch 1/25
+----------
